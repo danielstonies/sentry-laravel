@@ -2,10 +2,12 @@
 
 namespace Sentry\Laravel;
 
-use Monolog\Logger;
-use Monolog\Formatter\LineFormatter;
+use Exception;
+use Illuminate\Support\Facades\Log;
 use Monolog\Formatter\FormatterInterface;
+use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\AbstractProcessingHandler;
+use Monolog\Logger;
 use Sentry\Breadcrumb;
 use Sentry\Event;
 use Sentry\Severity;
@@ -200,10 +202,19 @@ class SentryHandler extends AbstractProcessingHandler
                     }
                 );
 
-                if (isset($record['context']['exception']) && $record['context']['exception'] instanceof \Throwable) {
-                    $this->hub->captureException($record['context']['exception']);
-                } else {
-                    $this->hub->captureMessage($record['formatted'], $this->getLogLevel($record['level']));
+                try {
+                    if (isset($record['context']['exception']) && $record['context']['exception'] instanceof \Throwable) {
+                        $this->hub->captureException($record['context']['exception']);
+                    } else {
+                        $this->hub->captureMessage($record['formatted'], $this->getLogLevel($record['level']));
+                    }
+                } catch (Exception $e) {
+                    // Do nothing as exception within exception logging should not break application logic.
+                    Log::channel('single')->warning('Exception occurred while logging to sentry',
+                        [
+                            'message' => $e->getMessage(),
+                            'trace' => $e->getTraceAsString(),
+                        ]);
                 }
             }
         );
