@@ -1,16 +1,10 @@
 {
-  "name": "sentry/sentry-laravel",
+  "name": "danielstonies/sentry-laravel",
   "type": "library",
   "description": "Laravel SDK for Sentry (https://sentry.io)",
   "keywords": ["sentry", "laravel", "log", "logging", "error-monitoring", "error-handler", "crash-reporting", "crash-reports"],
   "homepage": "https://sentry.io",
   "license": "Apache-2.0",
-  "authors": [
-    {
-      "name": "Sentry",
-      "email": "accounts@sentry.io"
-    }
-  ],
   "require": {
     "php": "^7.1",
     "illuminate/support": "5.0 - 5.8 | ^6.0",
